@@ -47,7 +47,8 @@ export default {
     dropdown: null
   }),
   methods:{
-    exit() {
+    async exit() {
+      // await this.$store.dispatch('exit') // use dispatch for return promise
       this.$router.push('/login?message=exit')
     }
   },

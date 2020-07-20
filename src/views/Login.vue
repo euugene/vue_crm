@@ -71,7 +71,6 @@
       password: {required, minLength: minLength(6)}
     },
     mounted() {
-      console.log(this.$route.query)
       if(messages[this.$route.query.message]){
         this.$message(messages[this.$route.query.message])
       }
