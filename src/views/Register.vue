@@ -1,37 +1,66 @@
 <template>
-  <form class="card auth-card">
+  <form class="card auth-card" @submit.prevent="handlerSignUp">
     <div class="card-content">
       <span class="card-title">Домашняя бухгалтерия</span>
       <div class="input-field">
         <input
           id="email"
           type="text"
+          v-model.trim = "email"
+          :class="{invalid: ($v.email.$dirty && !$v.email.required) || ($v.email.$dirty && !$v.email.email)}"
         >
         <label for="email">Email</label>
-        <small class="helper-text invalid">Email</small>
+        <small
+                class="helper-text invalid"
+                v-if ="$v.email.$dirty && !$v.email.required"
+        >Поле Email не должно быть пустым</small>
+        <small
+                class="helper-text invalid"
+                v-if ="$v.email.$dirty && !$v.email.email"
+        >Введите правильный Email</small>
       </div>
       <div class="input-field">
         <input
           id="password"
           type="password"
-          class="validate"
+          v-model.trim = "password"
+          :class="{invalid: ($v.password.$dirty && !$v.password.required) || ($v.password.$dirty && !$v.password.minLength)}"
         >
         <label for="password">Пароль</label>
-        <small class="helper-text invalid">Password</small>
+        <small
+                class="helper-text invalid"
+                v-if="$v.password.$dirty && !$v.password.required"
+        >Поле Password не должно быть пустым</small>
+        <small
+                class="helper-text invalid"
+                v-if="$v.password.$dirty && !$v.password.minLength"
+        >Ввеено символов: {{password.length}} из {{$v.password.$params.minLength.min}}</small>
       </div>
       <div class="input-field">
         <input
           id="name"
           type="text"
-          class="validate"
+          v-model = "name"
+          :class="{invalid: ($v.name.dirty && !$v.name.required)}"
         >
         <label for="name">Имя</label>
-        <small class="helper-text invalid">Name</small>
+        <small
+                class="helper-text invalid"
+                v-if="$v.name.$dirty && !$v.name.required"
+        >Поле Name не должно быть пустым</small>
       </div>
       <p>
         <label>
-          <input type="checkbox" />
+          <input type="checkbox"
+                 v-model = "confirm"
+                 v-on:click="changeConfirm($v.confirm)"
+          />
           <span>С правилами согласен</span>
+          <br>
+          <small
+                  class="helper-text invalid"
+                  v-if="$v.confirm.$dirty && $v.confirm.checked === false"
+          >Необходимо ознакомиться с правилами</small>
         </label>
       </p>
     </div>
@@ -48,8 +77,53 @@
 
       <p class="center">
         Уже есть аккаунт?
-        <a href="/">Войти!</a>
+        <router-link to="/login">Войти!</router-link>
       </p>
     </div>
   </form>
 </template>
+
+<script>
+  import {email, required, minLength} from './../../node_modules/vuelidate/lib/validators'
+  export default {
+    name: 'register',
+    data: () => ({
+      email: '',
+      password: '',
+      name: '',
+      confirm: false
+    }),
+    validations:{
+      email: {email, required},
+      password: {required, minLength: minLength(6)},
+      name:{required},
+      confirm: {checked: v => v} // must return true
+    },
+    methods:{
+      handlerSignUp(){
+        if (this.$v.$invalid){
+          this.$v.$touch()
+          return
+        }
+        const formData = {
+          email: this.email,
+          password: this.password,
+          name: this.name,
+          confirm: this.confirm
+        }
+        console.log(formData)
+        this.$router.push("./")
+      },
+      changeConfirm: function (event) {
+
+        (event === false)?(event === true):(event === false)
+        console.log(event)
+        // if(this.$v.data.confirm.checked == false){
+        //   this.$v.data.confirm.checked == true
+        // }
+
+      }
+    }
+
+  }
+</script>
