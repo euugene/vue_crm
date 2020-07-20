@@ -48,7 +48,6 @@ export default {
   }),
   methods:{
     exit() {
-      console.log('logout')
       this.$router.push('/login?message=exit')
     }
   },
