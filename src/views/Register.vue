@@ -100,7 +100,7 @@
       confirm: {checked: v => v} // must return true
     },
     methods:{
-      handlerSignUp(){
+      async handlerSignUp(){
         if (this.$v.$invalid){
           this.$v.$touch()
           return
@@ -111,17 +111,15 @@
           name: this.name,
           confirm: this.confirm
         }
-        console.log(formData)
-        this.$router.push("./")
+        try{
+          await this.$store.dispatch('register', formData)
+          this.$router.push('/')
+        } catch (e) {}
+
       },
       changeConfirm: function (event) {
-
-        (event === false)?(event === true):(event === false)
+        // (event === false)?(event === true):(event === false)
         console.log(event)
-        // if(this.$v.data.confirm.checked == false){
-        //   this.$v.data.confirm.checked == true
-        // }
-
       }
     }
 
